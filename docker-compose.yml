@@ -1,12 +1,24 @@
 services:
+  app: # Añade un servicio para tu aplicación Java
+    build: . # Le dice que construya la imagen usando el Dockerfile
+    ports:
+      - "8080:8080" # Mapea el puerto del contenedor al de tu máquina
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker # ¡Activa el perfil de Docker!
+      - SPRING_DATASOURCE_DB=product
+      - SPRING_DATASOURCE_USERNAME=papu
+      - SPRING_DATASOURCE_PASSWORD=123
+    depends_on: # Le dice que espere a que la base de datos esté lista
+      - postgre
+
   postgre:
     image: postgres:latest
     restart: always
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_USER=${SPRING_DATASOURCE_USERNAME}
-      - POSTGRES_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
-      - POSTGRES_DB=${SPRING_DATASOURCE_DB}
+      - POSTGRES_DB=product
+      - POSTGRES_USER=papu
+      - POSTGRES_PASSWORD=123
     volumes:
-      - ./postgres:/vae/lib/postgresql/data
+      - ./postgres:/var/lib/postgresql/data
